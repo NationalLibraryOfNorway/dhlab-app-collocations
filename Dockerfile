@@ -14,5 +14,5 @@ RUN pip install -r requirements.txt
 COPY . /code
 
 # command to run on container start
-CMD streamlit run coll.py --server.port 5001 --server.baseUrlPath /kollokasjon
-
+#CMD streamlit run coll.py --server.port 5001 --server.baseUrlPath /kollokasjon
+CMD streamlit run coll.py --server.port 5001
