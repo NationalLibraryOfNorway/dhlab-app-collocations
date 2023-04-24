@@ -1,7 +1,7 @@
 # set base image (host OS)
 FROM python:3.10-slim
 
-EXPOSE 5001
+EXPOSE 8501
 
 # set the working directory in the container
 WORKDIR /code
