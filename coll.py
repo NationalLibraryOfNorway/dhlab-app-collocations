@@ -286,7 +286,7 @@ else:
         st.markdown("__Korpusstørrelse:__ " + str(len(corpus)) + " dokumenter (__opplastet korpusdefinsjon__). ",  unsafe_allow_html=True)
 
 with col2:
-    st.markdown("Last ned " + get_table_download_link(excel_colls, link_content="kollokasjonstbaell", filename="collocations.xlsx") + ".", unsafe_allow_html=True)
+    st.markdown("Last ned " + get_table_download_link(excel_colls, link_content="kollokasjonstabell", filename="collocations.xlsx") + ".", unsafe_allow_html=True)
 
 
 with col1:
