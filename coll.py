@@ -18,7 +18,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 limit_conc = 10
 
-doctypes = {'Alle dokumenter': 'all', 'Aviser': 'digavis', 'Bøker': 'digibok', 'Tidsskrift': 'digitidsskrift', 'Stortingsdokumenter': 'digistorting'}
+doctypes = {'Alle dokumenter': 'all', 'Aviser': 'digavis', 'Bøker': 'digibok', 'Brev og manuskripter': 'digimanus' , 'Tidsskrift': 'digitidsskrift', 'Stortingsdokumenter': 'digistorting'}
 
 references = {
     "generisk referanse (1800-2022)": "reference/nob-nno_1800_2022.csv",
