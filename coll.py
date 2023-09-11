@@ -280,13 +280,13 @@ col1, col2 = st.columns(2)
 
 if st.session_state.corpus_upload is None:
     with col1:
-        st.markdown("__Korpusstørrelse:__ " + str(len(corpus)) + " dokumenter. " + "Last ned " + get_table_download_link(excel_corpus, link_content="korpusdefinisjon.", filename="corpus.xlsx"), unsafe_allow_html=True)
+        st.markdown("__Korpusstørrelse:__ " + str(len(corpus)) + " dokumenter. " + "Eksporter " + get_table_download_link(excel_corpus, link_content="korpusdefinisjon.", filename="corpus.xlsx"), unsafe_allow_html=True)
 else:
     with col1:
         st.markdown("__Korpusstørrelse:__ " + str(len(corpus)) + " dokumenter (__opplastet korpusdefinsjon__). ",  unsafe_allow_html=True)
 
 with col2:
-    st.markdown("Last ned " + get_table_download_link(excel_colls, link_content="kollokasjonstabell", filename="collocations.xlsx") + ".", unsafe_allow_html=True)
+    st.markdown("Eksporter " + get_table_download_link(excel_colls, link_content="kollokasjonstabell", filename="collocations.xlsx") + ".", unsafe_allow_html=True)
 
 
 with col1:
