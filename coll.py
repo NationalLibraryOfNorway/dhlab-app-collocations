@@ -35,7 +35,7 @@ references = {
 }
 
 # ADAPTED FROM: https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806
-@st.cache(suppress_st_warning=True, show_spinner=False)
+@st.cache_data(show_spinner=False)
 def get_table_download_link(content, link_content="XLSX", filename="corpus.xlsx"):
     """Generates a link allowing the data in a given panda dataframe to be downloaded
     in:  dataframe
@@ -74,7 +74,7 @@ def aggrid_interactive_table(df: pd.DataFrame):
 
     return selection
 
-@st.cache(suppress_st_warning=True, show_spinner=False)
+@st.cache_data(show_spinner=False)
 def to_excel(df, index_arg=False):
     output = BytesIO()
 
@@ -90,7 +90,7 @@ def sampling(a, b):
         res = sample(a, b)
     return res
 
-@st.cache(suppress_st_warning=True, show_spinner = False)
+@st.cache_data(show_spinner = False)
 def get_collocation(words, corpus, before = 5, after = 5, reference = None):
     try:
         colls = cc.Collocations(words=words, corpus=corpus, before=before, after=after, reference=reference)
@@ -114,17 +114,17 @@ def make_cloud(json_text, top=100, background='white', stretch=lambda x: 2**(10*
         ).generate_from_frequencies(pairs)
     return wc
 
-@st.cache(suppress_st_warning=True, show_spinner=False)
+@st.cache_data(show_spinner=False)
 def get_wordcloud(data, top=10):
     scaled_data = data.sum(axis=1) / data.sum()[0]
     wc = make_cloud(json.loads(scaled_data.to_json()), top=top, background='white', font_path=None, stretch=lambda x: 2**(10*x), width=1000, height=1000, prefer_horizontal=1.0)
     return wc
 
-@st.cache(suppress_st_warning=True, show_spinner = False)
+@st.cache_data(show_spinner = False)
 def get_reference(corpus, from_year = 1990, to_year = 2020, limit=50000):
     return d2.get_reference(corpus, from_year = from_year, to_year = to_year, limit=limit)
 
-@st.cache(suppress_st_warning=True, show_spinner = False)
+@st.cache_data(show_spinner = False)
 def get_corpus(doctype="digibok", from_year=1990, to_year=2020, limit=1000, freetext=None, fulltext=None):
     try:
         corpus = d2.document_corpus(doctype=doctype, from_year=from_year, to_year=to_year, limit=limit, freetext=freetext, fulltext=fulltext)
@@ -133,7 +133,7 @@ def get_corpus(doctype="digibok", from_year=1990, to_year=2020, limit=1000, free
         st.stop()
     return corpus
 
-@st.cache(suppress_st_warning=True, show_spinner = False)
+@st.cache_data(show_spinner = False)
 def get_dynamic_reference(doctype="digibok", corpus=None, limit=1000):
     try:
         # get year
@@ -149,7 +149,7 @@ def get_dynamic_reference(doctype="digibok", corpus=None, limit=1000):
         st.stop()
     return reference
 
-@st.cache(suppress_st_warning=True, show_spinner = False)
+@st.cache_data(show_spinner = False)
 def get_static_reference(path=None):
     try:
         reference = pd.read_csv(path, header=None)
@@ -160,7 +160,7 @@ def get_static_reference(path=None):
         st.stop()
     return reference
 
-@st.cache(suppress_st_warning=True, show_spinner=False)
+@st.cache_data(show_spinner=False)
 def get_concordances(corpus, query, limit=5000, window=20):
     try:
         conc = cc.Concordance(corpus, query, limit=5000, window=window)
