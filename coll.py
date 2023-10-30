@@ -169,24 +169,32 @@ def get_concordances(corpus, query, limit=5000, window=20):
         st.stop()
     return conc
 
-def print_concordances(conc):
+def print_concordances(conc, query):
     for row in conc.show(n=min(limit_conc, conc.size), style = False).iterrows():
         urn = row[1]["urn"]
-        metadata = corpus[corpus["urn"] == urn][['title', 'authors', 'year', 'timestamp']]
-        metadata = metadata.iloc[0]
 
-        if 'digavis' in urn:
-            timestamp = metadata["timestamp"]
+        if urn.startswith('URN:'):
+            metadata = corpus[corpus["urn"] == urn][['title', 'authors', 'year', 'timestamp']]
+            metadata = metadata.iloc[0]
+
+            if 'digavis' in urn:
+                timestamp = metadata["timestamp"]
+            else:
+                timestamp = metadata["year"]
+
+            if metadata["authors"] is None:
+                metadata["authors"] = ""
+            if metadata["title"] is None:
+                metadata["title"] = ""
+
+            url = "https://www.nb.no/items/%s?searchText=%s" % (urn, query)
+            link = "<a href='%s' target='_blank'>%s – %s – %s</a>" % (url, metadata["title"], metadata["authors"], timestamp)
         else:
-            timestamp = metadata["year"]
-
-        if metadata["authors"] is None:
-            metadata["authors"] = ""
-        if metadata["title"] is None:
-            metadata["title"] = ""
-
-        url = "https://urn.nb.no/%s" % (urn)
-        link = "<a href='%s' target='_blank'>%s – %s – %s</a>" % (url, metadata["title"], metadata["authors"], timestamp)
+            metadata = corpus[corpus["urn"] == urn][['city', 'langs', 'timestamp']]
+            metadata = metadata.iloc[0]
+            timestamp = metadata["timestamp"]
+            url = urn
+            link = "<a href='%s' target='_blank'>%s (%s)</a>" % (url, url, timestamp)
 
         conc_markdown = row[1]["concordance"].replace('<b>', '**')
         conc_markdown = conc_markdown.replace('</b>', '**')
@@ -311,7 +319,7 @@ try:
         with st.spinner('Henter konkordanser...'):
             conc = get_concordances(corpus, query, limit=5000, window=20)
             st.markdown("### Eksempler fra korpuset")
-            print_concordances(conc)
+            print_concordances(conc, query)
             if conc.size > limit_conc:
                 st.button('Vis flere konkordanser')
 except:
