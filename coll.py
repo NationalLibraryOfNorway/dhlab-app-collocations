@@ -18,7 +18,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 limit_conc = 10
 
-doctypes = {'Alle dokumenter': 'all', 'Aviser': 'digavis', 'Bøker': 'digibok', 'Brev og manuskripter': 'digimanus' , 'Tidsskrift': 'digitidsskrift', 'Stortingsdokumenter': 'digistorting', 'Helsekorpus': 'SNOMED*'}
+doctypes = {'Alle dokumenter': 'all', 'Aviser': 'digavis', 'Bøker': 'digibok', 'Brev og manuskripter': 'digimanus' , 'Tidsskrift': 'digitidsskrift', 'Stortingsdokumenter': 'digistorting', 'Nettarkiv (helsekorpus)': 'SNOMED*'}
 
 references = {
     "generisk referanse (1800-2022)": "reference/nob-nno_1800_2022.csv",
@@ -127,7 +127,10 @@ def get_reference(corpus, from_year = 1990, to_year = 2020, limit=50000):
 @st.cache_data(show_spinner = False)
 def get_corpus(doctype="digibok", from_year=1990, to_year=2020, limit=1000, freetext=None, fulltext=None):
     try:
-        corpus = d2.document_corpus(doctype=doctype, from_year=from_year, to_year=to_year, limit=limit, freetext=freetext, fulltext=fulltext)
+        if doctype == "SNOMED*":
+            corpus = d2.document_corpus(doctype=doctype, limit=limit, freetext=freetext, fulltext=fulltext)
+        else:
+            corpus = d2.document_corpus(doctype=doctype, from_year=from_year, to_year=to_year, limit=limit, freetext=freetext, fulltext=fulltext)
     except:
         st.error("Korpus kunne ikke hentes. Se på parametrene for korpuset eller prøv igjen.")
         st.stop()
@@ -221,7 +224,7 @@ if st.session_state.corpus_upload is None:
         doctype = st.selectbox("Velg dokumenttype", doctypes.keys(), index=2, help="Velg dokumenttype som skal inngå i korpuset. Valget 'Alle dokumenter' innebærer gjerne noe mer ventetid enn å velge spesifikke dokumenttyper.")
         fulltext = st.text_input("Som inneholder fulltekst (kan stå tomt)", placeholder="jakt AND fiske", help="""Tar bare med dokumenter som inneholder ordene i dette feltet. Spørringene kan innehold enkeltord kombinert med logiske operatorer, f.eks. jakt AND fiske_, _jakt OR fiske_, fraser som "i forhold til" eller nærhetsspørringer: _NEAR(jakt fiske, 5)_. Sistnevnte finner dokumenter hvor to ord _jakt_ and _fiske_ opptrer innenfor et vindu av fem ord.""")
         from_year = st.number_input('Fra år', min_value=1500, max_value=2030, value=1990)
-        to_year = st.number_input('Til år', min_value=1500, max_value=2030, value=2020)
+        to_year = st.number_input('Til år', min_value=1500, max_value=2030, value=2023)
         freetext = st.text_input("Metadata (kan stå tomt)", placeholder="""ddc:\"641.5\"""", help="""Forenklet metadatasøk. Ved å søke på enkeltord eller fraser søkes innenfor alle felt i metadatabasen. Du kan begrense spørringen til enkeltflet ved å bruke nøkkel:verdi-notasjon, f.eks. title:fisk finner alle dokumenter med _fisk_ i tittelen. Felt som kan brukes i spørringen er: _title_, _authors_, _urn_, _city_, _timestamp_ (YYYYMMDD), _year (YYYY)_, _publisher_, _langs_, _subjects_, _ddc_, _genres_, _literaryform_, _doctype_. Søk som inneholder tegnsetting, må generelt omgis med anførselstegn, f.eks. ddc: "641.5". Kombinasjoner er mulig: title:fisk AND ddc:"641.5".""")
         limit = st.number_input('Antall dokumenter i sample', value=5000)        
         submit_button = st.form_submit_button(label='Bygg korpus!')
