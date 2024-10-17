@@ -1,8 +1,6 @@
 import warnings
 import matplotlib.pyplot as plt
 import streamlit as st
-from st_aggrid import AgGrid, GridOptionsBuilder, ColumnsAutoSizeMode
-from st_aggrid.shared import GridUpdateMode
 import dhlab.api.dhlab_api as d2
 import dhlab.text.conc_coll as cc
 import pandas as pd
@@ -48,32 +46,6 @@ def get_table_download_link(content, link_content="XLSX", filename="corpus.xlsx"
     href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">{link_content}</a>'
     return href
 
-# ADAPTED FROM: https://github.com/streamlit/example-app-interactive-table/blob/main/streamlit_app.py
-def aggrid_interactive_table(df: pd.DataFrame):
-    """Creates an st-aggrid interactive table based on a dataframe.
-    Args:
-        df (pd.DataFrame]): Source dataframe
-    Returns:
-        dict: The selected row
-    """
-    options = GridOptionsBuilder.from_dataframe(df)
-
-    #options.configure_side_bar()
-
-    options.configure_selection(selection_mode="single")
-    options.configure_pagination(enabled=False)
-    selection = AgGrid(
-        df,
-        enable_enterprise_modules=False,
-        gridOptions=options.build(),
-        theme="alpine",
-        update_mode=GridUpdateMode.MODEL_CHANGED,
-        fit_columns_on_grid_load=True,
-        allow_unsafe_jscode=False
-    )
-
-    return selection
-
 @st.cache_data(show_spinner=False)
 def to_excel(df, index_arg=False):
     output = BytesIO()
@@ -114,7 +86,6 @@ def make_cloud(json_text, top=100, background='white', stretch=lambda x: 2**(10*
         ).generate_from_frequencies(pairs)
     return wc
 
-@st.cache_data(show_spinner=False)
 def get_wordcloud(data, top=10):
     scaled_data = data.sum(axis=1) / data.sum()[0]
     wc = make_cloud(json.loads(scaled_data.to_json()), top=top, background='white', font_path=None, stretch=lambda x: 2**(10*x), width=1000, height=1000, prefer_horizontal=1.0)
@@ -301,8 +272,8 @@ with col2:
 
 
 with col1:
-    selection = aggrid_interactive_table(df=colls)
-    #st.write(colls.to_html(escape=False, index=False), unsafe_allow_html=True)
+    #selection = aggrid_interactive_table(df=colls)
+    selection = st.dataframe(colls, hide_index=True, on_select="rerun", selection_mode="single-row", use_container_width=True)
 with col2:
     try:
         wc = get_wordcloud(colls[["Kollokat", sort_by]].set_index("Kollokat"), top=head)
@@ -314,8 +285,8 @@ with col2:
         pass
 
 try:
-    if selection["selected_rows"] != []:
-        selected_collword = selection["selected_rows"][0]["Kollokat"]
+    if selection['selection']['rows'] != []:
+        selected_collword = colls.loc[selection['selection']['rows'][0]]["Kollokat"]
 
         query = """NEAR("%s" "%s", %s)""" % (words, selected_collword, str(int(before) + int(after)))
 
