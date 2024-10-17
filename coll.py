@@ -1,4 +1,3 @@
-import warnings
 import matplotlib.pyplot as plt
 import streamlit as st
 import dhlab.api.dhlab_api as d2
@@ -11,8 +10,6 @@ from random import sample
 from collections import Counter
 import wordcloud
 import json
-
-warnings.simplefilter(action='ignore', category=FutureWarning)
 
 limit_conc = 10
 
