@@ -269,15 +269,12 @@ with col2:
 
 
 with col1:
-    #selection = aggrid_interactive_table(df=colls)
     selection = st.dataframe(colls, hide_index=True, on_select="rerun", selection_mode="single-row", use_container_width=True)
 with col2:
     try:
         wc = get_wordcloud(colls[["Kollokat", sort_by]].set_index("Kollokat"), top=head)
-        fig, ax = plt.subplots(figsize = (5, 5))
-        ax.imshow(wc)
-        plt.axis("off")
-        st.pyplot(fig)
+        wc_svg = wc.to_svg()
+        st.image(wc_svg, use_container_width=True)
     except:
         pass
 
