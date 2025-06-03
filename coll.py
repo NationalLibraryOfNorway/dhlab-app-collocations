@@ -1,9 +1,7 @@
-import matplotlib.pyplot as plt
 import streamlit as st
 import dhlab.api.dhlab_api as d2
 import dhlab.text.conc_coll as cc
 import pandas as pd
-import datetime
 import base64
 from io import BytesIO
 from random import sample
@@ -255,29 +253,27 @@ colls["Relevans"] = colls["Relevans"].round(2)
 excel_colls = to_excel(colls)
 excel_corpus = to_excel(corpus)
 
-col1, col2 = st.columns(2)
+col1_1, col1_2 = st.columns(2) # row 1
 
 if st.session_state.corpus_upload is None:
-    with col1:
+    with col1_1:
         st.markdown("__Korpusstørrelse:__ " + str(len(corpus)) + " dokumenter. " + "Eksporter " + get_table_download_link(excel_corpus, link_content="korpusdefinisjon.", filename="corpus.xlsx"), unsafe_allow_html=True)
 else:
-    with col1:
+    with col1_1:
         st.markdown("__Korpusstørrelse:__ " + str(len(corpus)) + " dokumenter (__opplastet korpusdefinsjon__). ",  unsafe_allow_html=True)
 
-with col2:
+with col1_2:
     st.markdown("Eksporter " + get_table_download_link(excel_colls, link_content="kollokasjonstabell", filename="collocations.xlsx") + ".", unsafe_allow_html=True)
 
+col2_1, col2_2 = st.columns(2) # row 2
 
-with col1:
-    #selection = aggrid_interactive_table(df=colls)
+with col2_1:
     selection = st.dataframe(colls, hide_index=True, on_select="rerun", selection_mode="single-row", use_container_width=True)
-with col2:
+with col2_2:
     try:
         wc = get_wordcloud(colls[["Kollokat", sort_by]].set_index("Kollokat"), top=head)
-        fig, ax = plt.subplots(figsize = (5, 5))
-        ax.imshow(wc)
-        plt.axis("off")
-        st.pyplot(fig)
+        wc_svg = wc.to_svg()
+        st.image(wc_svg, use_container_width=True)
     except:
         pass
 
